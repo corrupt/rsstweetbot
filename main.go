@@ -25,7 +25,7 @@ func main() {
 		fmt.Println(err)
 	}
 
-	PollFeed("http://www.metalstorm.net/rss/news.xml", 5)
+	PollFeed(RSSFeedLocation, 5)
 }
 
 func PollFeed(uri string, timeout int) {

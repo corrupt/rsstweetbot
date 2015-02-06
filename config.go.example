@@ -5,6 +5,7 @@ var (
 	AccessTokenSecret = "Your Access Token Secret"
 	ConsumerKey       = "Your Consumer Key"
 	ConsumerSecret    = "Your Consumer Key Secret"
+	RSSFeedLocation   = "http://your.feed/location"
 	database_location = "/your/database/location.db"
 	linklength        = 23 //t.co shortlink length default
 )
