@@ -1,0 +1,10 @@
+package main
+
+var (
+	AccessToken       = "Your Access Token"
+	AccessTokenSecret = "Your Access Token Secret"
+	ConsumerKey       = "Your Consumer Key"
+	ConsumerSecret    = "Your Consumer Key Secret"
+	database_location = "/your/database/location.db"
+	linklength        = 23 //t.co shortlink length default
+)
