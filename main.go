@@ -2,8 +2,6 @@ package main
 
 import (
 	"fmt"
-	//"github.com/ChimeraCoder/anaconda"
-	//"errors"
 	"github.com/corrupt/anaconda"
 	rss "github.com/jteeuwen/go-pkg-rss"
 	"golang.org/x/net/html/charset"
@@ -47,7 +45,7 @@ func getCharsetReader(contentType string, input io.Reader) (io.Reader, error) {
 }
 
 func chanHandler(feed *rss.Feed, newchannels []*rss.Channel) {
-	//fmt.Printf("%d new channel(s) in %s\n", len(newchannels), feed.Url)
+	//No need for a channel handler
 }
 
 func itemHandler(feed *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
@@ -64,7 +62,6 @@ func tweetHandler(tweet Tweet) (err error) {
 		fmt.Println(err)
 	}
 	if twt != nil && twt.url == tweet.url {
-		//return errors.New("Tweet '" + tweet.headline + "' is already cached")
 		log.Println("Tweet '" + tweet.headline + "' is already cached")
 	} else {
 		_, err = api.PostTweet(tweet.headline+"\n"+tweet.url, nil)
