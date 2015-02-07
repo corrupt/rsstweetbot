@@ -1,13 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"github.com/corrupt/anaconda"
 	rss "github.com/jteeuwen/go-pkg-rss"
 	"golang.org/x/net/html/charset"
 	"io"
 	"log"
-	"os"
 	"time"
 )
 
@@ -20,7 +18,7 @@ func main() {
 	go updateConfiguration()
 	err := dbInit()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	PollFeed(RSSFeedLocation, 5)
@@ -30,8 +28,9 @@ func PollFeed(uri string, timeout int) {
 	feed := rss.New(timeout, true, chanHandler, itemHandler)
 
 	for {
+		log.Println("Fetching RSS Feed")
 		if err := feed.Fetch(uri, getCharsetReader); err != nil {
-			fmt.Fprintf(os.Stderr, "[e] %s: %s", uri, err)
+			log.Printf("[e] %s: %s", uri, err)
 			return
 		}
 
@@ -50,6 +49,7 @@ func chanHandler(feed *rss.Feed, newchannels []*rss.Channel) {
 
 func itemHandler(feed *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 	for _, item := range newitems {
+		log.Println("\tReceived '" + item.Title + "'")
 		tweet := Tweet{item.Links[0].Href, shortenTweet(item.Title)}
 		tweetHandler(tweet)
 	}
@@ -59,18 +59,19 @@ func tweetHandler(tweet Tweet) (err error) {
 
 	twt, err := getTweetByUrl(tweet.url)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 	if twt != nil && twt.url == tweet.url {
 		log.Println("Tweet '" + tweet.headline + "' is already cached")
 	} else {
+		log.Println("Tweeting '" + tweet.headline + "'")
 		_, err = api.PostTweet(tweet.headline+"\n"+tweet.url, nil)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		} else {
 			err = insertTweet(tweet)
 			if err != nil {
-				fmt.Println(err)
+				log.Println(err)
 			}
 		}
 	}
@@ -78,7 +79,7 @@ func tweetHandler(tweet Tweet) (err error) {
 }
 
 func shortenTweet(tweet string) string {
-	txtlen := 140 - linklength - 1 //tweet length - t.co link length - \n
+	txtlen := 140 - LinkLength - 1 //tweet length - t.co link length - \n
 	if len(tweet) > txtlen {
 		return tweet[:txtlen-3] + "..."
 	}
@@ -90,9 +91,9 @@ func updateConfiguration() {
 		log.Println("Updating Twitter configuration cache")
 		config, err := api.GetConfiguration(nil)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		} else {
-			linklength = config.ShortUrlLengthHttps
+			LinkLength = config.ShortUrlLengthHttps
 		}
 		<-time.After(24 * time.Hour)
 	}

@@ -39,7 +39,7 @@ func dbInit() (err error) {
 
 func dbConnect() (db *sql.DB) {
 	db, err := sql.Open("sqlite3",
-		database_location)
+		DatabaseLocation)
 	if err != nil {
 		log.Fatal(err)
 	}
