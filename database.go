@@ -80,7 +80,7 @@ func insertTweet(tweet Tweet) error {
 	stmt := prepareInsertStatement(db)
 	defer stmt.Close()
 
-	log.Println("Inserting '" + tweet.headline + "'")
+	log.Println("\tCaching '" + tweet.headline + "'")
 	_, err := stmt.Exec(tweet.url, tweet.headline)
 	return err
 }
@@ -92,7 +92,7 @@ func getTweetByUrl(url string) (tweet *Tweet, err error) {
 	stmt := prepareSelectStatement(db)
 	defer stmt.Close()
 
-	log.Println("Trying to retrieve '" + url + "'")
+	log.Println("Probing cache for '" + tweet.headline + "'")
 	err = stmt.QueryRow(url).Scan(&(tweet.url), &(tweet.headline))
 	return tweet, err
 }

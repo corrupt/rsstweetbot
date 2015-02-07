@@ -49,7 +49,7 @@ func chanHandler(feed *rss.Feed, newchannels []*rss.Channel) {
 
 func itemHandler(feed *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 	for _, item := range newitems {
-		log.Println("\tReceived '" + item.Title + "'")
+		log.Println("Received '" + item.Title + "'")
 		tweet := Tweet{item.Links[0].Href, shortenTweet(item.Title)}
 		tweetHandler(tweet)
 	}
@@ -62,9 +62,9 @@ func tweetHandler(tweet Tweet) (err error) {
 		log.Println(err)
 	}
 	if twt != nil && twt.url == tweet.url {
-		log.Println("Tweet '" + tweet.headline + "' is already cached")
+		log.Println("\tTweet '" + tweet.headline + "' is already cached")
 	} else {
-		log.Println("Tweeting '" + tweet.headline + "'")
+		log.Println("\tTweeting '" + tweet.headline + "'")
 		_, err = api.PostTweet(tweet.headline+"\n"+tweet.url, nil)
 		if err != nil {
 			log.Println(err)
