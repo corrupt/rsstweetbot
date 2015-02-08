@@ -4,6 +4,7 @@ import (
 	"github.com/corrupt/anaconda"
 	rss "github.com/jteeuwen/go-pkg-rss"
 	"golang.org/x/net/html/charset"
+	"html"
 	"io"
 	"log"
 	"time"
@@ -50,7 +51,8 @@ func chanHandler(feed *rss.Feed, newchannels []*rss.Channel) {
 func itemHandler(feed *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 	for _, item := range newitems {
 		log.Println("Received '" + item.Title + "'")
-		tweet := Tweet{item.Links[0].Href, shortenTweet(item.Title)}
+		unescapedTitle := html.UnescapeString(item.Title)
+		tweet := Tweet{item.Links[0].Href, shortenTweet(unescapedTitle)}
 		tweetHandler(tweet)
 	}
 }
