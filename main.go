@@ -52,18 +52,19 @@ func itemHandler(feed *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 	for _, item := range newitems {
 		log.Println("Received '" + item.Title + "'")
 		unescapedTitle := html.UnescapeString(item.Title)
-		tweet := Tweet{item.Links[0].Href, shortenTweet(unescapedTitle)}
+		tweet := Tweet{item.Links[0].Href, shortenTweet(unescapedTitle), *(item.Guid)}
 		tweetHandler(tweet)
 	}
+	//databaseCleanup(
 }
 
 func tweetHandler(tweet Tweet) (err error) {
 
-	twt, err := getTweetByUrl(tweet.url)
+	twt, err := getTweetByGuid(tweet.guid)
 	if err != nil {
 		log.Println(err)
 	}
-	if twt != nil && twt.url == tweet.url {
+	if twt != nil && twt.guid == tweet.guid {
 		log.Println("\tTweet '" + tweet.headline + "' is already cached")
 	} else {
 		log.Println("\tTweeting '" + tweet.headline + "'")
