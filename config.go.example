@@ -6,7 +6,7 @@ var (
 	ConsumerKey       = "Your Consumer Key"
 	ConsumerSecret    = "Your Consumer Key Secret"
 	RSSFeedLocation   = "http://your.feed/location"
-	DatabaseLocation = "/your/database/location.db"
+	DatabaseLocation  = "/your/database/location.db"
 	LinkLength        = 23 //t.co shortlink length default
-	CacheSize		  = 250 //Number of items to hold in the cache
+	CacheSize         = 250 //Number of items to hold in the cache
 )
