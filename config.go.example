@@ -8,4 +8,5 @@ var (
 	RSSFeedLocation   = "http://your.feed/location"
 	DatabaseLocation = "/your/database/location.db"
 	LinkLength        = 23 //t.co shortlink length default
+	CacheSize		  = 250 //Number of items to hold in the cache
 )
