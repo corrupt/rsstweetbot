@@ -25,14 +25,15 @@ func main() {
 		log.Println("Could not open log file")
 		os.Exit(1)
 	}
-	logger = log.New(logFile, "", log.Ldate|log.Ltime|log.Lshortfile)
+	logger = log.New(io.MultiWriter(logFile,os.Stdout), "", log.Ldate|log.Ltime|log.Lshortfile)
 
-	go updateConfiguration()
 	err = dbInit()
 	if err != nil {
 		logger.Println(err)
+		os.Exit(1)
 	}
 
+	go updateConfiguration()
 	PollFeed(RSSFeedLocation, 5)
 }
 
