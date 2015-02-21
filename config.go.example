@@ -9,4 +9,5 @@ var (
 	DatabaseLocation  = "/your/database/location.db"
 	LinkLength        = 23 //t.co shortlink length default
 	CacheSize         = 250 //Number of items to hold in the cache
+	LogFile           = "/path/to/log/file"
 )

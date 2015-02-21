@@ -7,19 +7,30 @@ import (
 	"html"
 	"io"
 	"log"
+	"os"
 	"time"
 )
 
-var api = anaconda.NewTwitterApi(AccessToken, AccessTokenSecret)
+var (
+	api    = anaconda.NewTwitterApi(AccessToken, AccessTokenSecret)
+	logger *log.Logger
+)
 
 func main() {
 	anaconda.SetConsumerKey(ConsumerKey)
 	anaconda.SetConsumerSecret(ConsumerSecret)
 
-	go updateConfiguration()
-	err := dbInit()
+	logFile, err := os.Create(LogFile)
 	if err != nil {
-		log.Println(err)
+		log.Println("Could not open log file")
+		os.Exit(1)
+	}
+	logger = log.New(logFile, "", log.Ldate|log.Ltime|log.Lshortfile)
+
+	go updateConfiguration()
+	err = dbInit()
+	if err != nil {
+		logger.Println(err)
 	}
 
 	PollFeed(RSSFeedLocation, 5)
@@ -29,9 +40,9 @@ func PollFeed(uri string, timeout int) {
 	feed := rss.New(timeout, true, chanHandler, itemHandler)
 
 	for {
-		log.Println("Fetching RSS Feed")
+		logger.Println("Fetching RSS Feed")
 		if err := feed.Fetch(uri, getCharsetReader); err != nil {
-			log.Printf("[e] %s: %s", uri, err)
+			logger.Printf("[e] %s: %s", uri, err)
 			return
 		}
 
@@ -50,7 +61,7 @@ func chanHandler(feed *rss.Feed, newchannels []*rss.Channel) {
 
 func itemHandler(feed *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 	for _, item := range newitems {
-		log.Println("Received '" + item.Title + "'")
+		logger.Println("Received '" + item.Title + "'")
 		unescapedTitle := html.UnescapeString(item.Title)
 		tweet := Tweet{item.Links[0].Href, shortenTweet(unescapedTitle), *(item.Guid)}
 		tweetHandler(tweet)
@@ -62,19 +73,19 @@ func tweetHandler(tweet Tweet) (err error) {
 
 	twt, err := getTweetByGuid(tweet.guid)
 	if err != nil {
-		log.Println(err)
+		logger.Println(err)
 	}
 	if twt != nil && twt.guid == tweet.guid {
-		log.Println("\tTweet '" + tweet.headline + "' is already cached")
+		logger.Println("\tTweet '" + tweet.headline + "' is already cached")
 	} else {
-		log.Println("\tTweeting '" + tweet.headline + "'")
+		logger.Println("\tTweeting '" + tweet.headline + "'")
 		_, err = api.PostTweet(tweet.headline+"\n"+tweet.url, nil)
 		if err != nil {
-			log.Println(err)
+			logger.Println(err)
 		} else {
 			err = insertTweet(tweet)
 			if err != nil {
-				log.Println(err)
+				logger.Println(err)
 			}
 		}
 	}
@@ -91,10 +102,10 @@ func shortenTweet(tweet string) string {
 
 func updateConfiguration() {
 	for {
-		log.Println("Updating Twitter configuration cache")
+		logger.Println("Updating Twitter configuration cache")
 		config, err := api.GetConfiguration(nil)
 		if err != nil {
-			log.Println(err)
+			logger.Println(err)
 		} else {
 			LinkLength = config.ShortUrlLengthHttps
 		}
