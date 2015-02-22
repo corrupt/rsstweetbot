@@ -25,7 +25,7 @@ func main() {
 		log.Println("Could not open log file")
 		os.Exit(1)
 	}
-	logger = log.New(io.MultiWriter(logFile,os.Stdout), "", log.Ldate|log.Ltime|log.Lshortfile)
+	logger = log.New(io.MultiWriter(logFile, os.Stdout), "", log.Ldate|log.Ltime|log.Lshortfile)
 
 	err = dbInit()
 	if err != nil {
@@ -44,7 +44,6 @@ func PollFeed(uri string, timeout int) {
 		logger.Println("Fetching RSS Feed")
 		if err := feed.Fetch(uri, getCharsetReader); err != nil {
 			logger.Printf("[e] %s: %s", uri, err)
-			return
 		}
 
 		<-time.After(time.Duration(feed.SecondsTillUpdate() * 1e9))
