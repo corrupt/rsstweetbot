@@ -93,7 +93,7 @@ func tweetHandler(tweet Tweet) (err error) {
 }
 
 func shortenTweet(tweet string) string {
-	txtlen := 140 - LinkLength - 1 //tweet length - t.co link length - \n
+	txtlen := 280 - LinkLength - 1 //tweet length - t.co link length - \n
 	if len(tweet) > txtlen {
 		return tweet[:txtlen-3] + "..."
 	}
