@@ -1,14 +1,15 @@
 package main
 
 import (
-	"github.com/corrupt/anaconda"
-	rss "github.com/jteeuwen/go-pkg-rss"
-	"golang.org/x/net/html/charset"
 	"html"
 	"io"
 	"log"
 	"os"
 	"time"
+
+	"github.com/corrupt/anaconda"
+	rss "github.com/muesli/go-pkg-rss"
+	"golang.org/x/net/html/charset"
 )
 
 var (
